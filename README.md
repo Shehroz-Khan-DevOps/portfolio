@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# M. Shehroz Khan — Portfolio
+
+Personal portfolio site for M. Shehroz Khan, Software Systems & DevOps Engineer.
+
+**Live site:** [portfolio-shehrozkhan.vercel.app](https://portfolio-shehrozkhan.vercel.app/)
+
+## Features
+
+- Animated terminal hero with a typewriter effect cycling through live-style status commands (`whoami`, `uptime`, `kubectl get pods`, `terraform plan`)
+- Dynamic availability badge with rotating status messages and a live Lahore (PKT) clock
+- Dark/light theme toggle with persisted preference and no flash-of-wrong-theme
+- Scroll-triggered reveal animations throughout (Framer Motion)
+- Experience, skills, and certifications pulled from a single content source
+- Featured projects with client-side filtering by technology tag
+- Blog powered by MDX (`content/blog/*.mdx`) with frontmatter-driven listing and detail pages
+- Working contact form backed by a Next.js Route Handler, with optional email delivery via [Resend](https://resend.com)
+- Downloadable resume (`/resume.pdf`)
+
+## Tech Stack
+
+- [Next.js 16](https://nextjs.org) (App Router, Turbopack)
+- TypeScript
+- Tailwind CSS v4
+- Framer Motion
+- `next-mdx-remote` + `gray-matter` for the blog
+- [Resend](https://resend.com) for contact form email delivery
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view it.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copy `.env.example` to `.env.local` to enable contact form email delivery:
 
-## Learn More
+```bash
+RESEND_API_KEY=      # from resend.com dashboard
+CONTACT_TO_EMAIL=    # inbox to receive submissions
+```
 
-To learn more about Next.js, take a look at the following resources:
+Without these set, the contact form still works and returns success to visitors — submissions are just logged server-side instead of emailed.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+content/blog/        MDX blog posts
+src/app/              Routes (home, blog, contact API)
+src/components/       UI components
+src/lib/               Portfolio content (data.ts) and blog utilities (posts.ts)
+```
 
-## Deploy on Vercel
+To update the portfolio content (experience, skills, projects, certifications), edit `src/lib/data.ts` — it's the single source of truth used across the site.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deployed on [Vercel](https://vercel.com). Push to `main` to trigger a new deployment.
