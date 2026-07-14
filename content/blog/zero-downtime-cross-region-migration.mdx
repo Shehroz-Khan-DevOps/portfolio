@@ -1,0 +1,39 @@
+---
+title: "Notes from a Zero-Downtime Cross-Region Migration"
+date: "2025-08-14"
+excerpt: "Moving a live production workload across AWS regions without users noticing, step by step."
+tags: ["AWS", "Terraform", "SRE"]
+---
+
+Migrating a live production application across AWS regions is the kind of
+project where "it mostly worked" isn't good enough. Here's roughly how it
+went.
+
+## Start with the data, not the compute
+
+The instinct is to think about servers first. In practice, the hard part is
+always data — replication lag, consistency guarantees, and the cutover
+window. We stood up read replicas in the target region well before touching
+any traffic routing, and watched replication lag under real load for days
+before trusting it.
+
+## Shift traffic gradually, not all at once
+
+Instead of a hard cutover, DNS weighting shifted a small percentage of
+traffic to the new region first. That gave us a way to catch
+region-specific issues — latency to a dependency, a misconfigured security
+group, an IAM role that existed in one region but not the other — while the
+blast radius was still small.
+
+## Watch the boring metrics
+
+The dashboards that mattered most during the migration weren't
+exotic — they were basic error rates, p99 latency, and connection pool
+saturation. Nothing dramatic; just enough signal to notice a problem within
+minutes instead of hearing about it from a customer.
+
+## Result
+
+The cutover finished with zero customer-visible downtime. The unglamorous
+truth is that it worked because of the boring parts: staged rollout,
+health checks at every stage, and a rollback plan we hoped not to use.

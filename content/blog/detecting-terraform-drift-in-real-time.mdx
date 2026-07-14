@@ -1,0 +1,45 @@
+---
+title: "Detecting Terraform Drift in Real Time"
+date: "2025-11-02"
+excerpt: "Why config drift quietly breaks production, and how a self-hosted dashboard can catch it before it does."
+tags: ["Terraform", "AWS", "GitOps"]
+---
+
+Config drift is one of those problems that never announces itself. Someone
+clicks a button in the AWS console during an incident, a security group gets
+a manual patch that never makes it back into version control, and six months
+later `terraform plan` wants to change forty resources nobody remembers
+touching.
+
+## Why drift happens
+
+Most drift isn't malicious — it's operational. Emergency fixes during an
+incident, a well-meaning teammate testing something directly in the console,
+or a resource created outside of Terraform entirely. The problem is that
+Terraform's state file only knows what *it* changed, not what changed
+underneath it.
+
+## What I built
+
+I built **DriftLens**, a self-hosted dashboard that continuously diffs live
+AWS resource state against Terraform state and surfaces drift as it happens,
+instead of waiting for the next scheduled `plan`. A few design decisions
+mattered more than the rest:
+
+- **Streaming feedback.** Plan and apply output streams to the browser over
+  Server-Sent Events, so remediation doesn't feel like a black box.
+- **Auto-generated remediation.** When drift is detected, DriftLens
+  generates the Terraform HCL needed to reconcile it, rather than just
+  reporting the diff.
+- **GitOps by default.** Every generated fix is committed and opened as a
+  pull request automatically, so nothing lands in production without
+  review.
+- **Multi-region from one workspace.** Provider aliases plus a shared S3
+  state backend let a single workspace manage resources across regions
+  without duplicating state files.
+
+## The takeaway
+
+Drift detection tools are only useful if they fit into how a team already
+reviews changes. The moment a "fix" bypasses your normal PR process, you've
+just traded one kind of drift for another.
