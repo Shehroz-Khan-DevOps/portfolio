@@ -9,11 +9,11 @@ export const profile = {
   terminalHandle: "shehroz@prod:~",
   tagline: "Building resilient, self-healing cloud infrastructure.",
   summary:
-    "Results-driven DevOps and Site Reliability Engineer with 4+ years of experience designing, deploying, and managing secure, scalable infrastructure on AWS using Terraform. Skilled in CI/CD automation, container orchestration, and observability tooling. Proven track record of zero-downtime production migrations, incident response, and cross-team collaboration to improve system reliability and performance.",
+    "Results-driven DevOps and Site Reliability Engineer with 3+ years of experience designing, deploying, and managing secure, scalable infrastructure on AWS using Terraform. Skilled in CI/CD automation, container orchestration, and observability tooling. Proven track record of zero-downtime production migrations, incident response, and cross-team collaboration to improve system reliability and performance.",
 };
 
 export const metrics = [
-  { label: "Years of experience", value: "4+" },
+  { label: "Years of experience", value: "3+" },
   { label: "Zero-downtime migrations", value: "100%" },
   { label: "AWS certifications", value: "3" },
   { label: "Production incidents resolved", value: "50+" },
