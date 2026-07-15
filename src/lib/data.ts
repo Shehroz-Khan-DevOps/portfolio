@@ -38,6 +38,10 @@ export const skillCategories: SkillCategory[] = [
     items: ["Terraform", "Ansible"],
   },
   {
+    name: "CI/CD",
+    items: ["GitHub Actions", "Jenkins"],
+  },
+  {
     name: "Observability",
     items: ["Datadog", "Sumo Logic", "CloudWatch", "PagerDuty"],
   },
@@ -54,8 +58,12 @@ export const skillCategories: SkillCategory[] = [
     items: ["Okta", "Authorization (Groups/ACLs)", "Encryption"],
   },
   {
+    name: "Operating System",
+    items: ["Linux", "Windows"],
+  },
+  {
     name: "Tools",
-    items: ["GitHub", "GitHub Actions", "Postman", "Nginx"],
+    items: ["GitHub", "Postman", "Nginx"],
   },
 ];
 
