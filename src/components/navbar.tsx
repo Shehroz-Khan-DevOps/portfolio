@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X, Terminal, Download } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -14,8 +15,36 @@ const NAV_LINKS = [
   { href: "/#contact", label: "Contact" },
 ];
 
+const SECTION_IDS = NAV_LINKS.filter((link) => link.href.startsWith("/#")).map(
+  (link) => link.href.slice(2)
+);
+
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState<string>("");
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname !== "/") return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.find((entry) => entry.isIntersecting);
+        if (visible) setActive(`/#${visible.target.id}`);
+      },
+      { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
+    );
+
+    SECTION_IDS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  const isActive = (href: string) =>
+    href === "/blog" ? pathname === "/blog" : pathname === "/" && active === href;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
@@ -33,7 +62,10 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-muted transition-colors hover:text-foreground"
+              onClick={() => setActive(link.href)}
+              className={`text-sm transition-colors hover:text-foreground ${
+                isActive(link.href) ? "text-accent font-medium" : "text-muted"
+              }`}
             >
               {link.label}
             </Link>
@@ -71,8 +103,13 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => setOpen(false)}
-                className="text-sm text-muted transition-colors hover:text-foreground"
+                onClick={() => {
+                  setActive(link.href);
+                  setOpen(false);
+                }}
+                className={`text-sm transition-colors hover:text-foreground ${
+                  isActive(link.href) ? "text-accent font-medium" : "text-muted"
+                }`}
               >
                 {link.label}
               </Link>
