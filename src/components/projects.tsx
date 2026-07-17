@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { allProjectTags, projects } from "@/lib/data";
 import { SectionReveal } from "./section-reveal";
+import { GithubIcon } from "./icons";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Projects() {
@@ -71,9 +72,17 @@ export function Projects() {
                   <h3 className="text-lg font-semibold text-foreground">
                     {project.name}
                   </h3>
-                  <span className="shrink-0 font-mono text-xs text-muted">
-                    {project.year}
-                  </span>
+                  {project.githubUrl && (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`${project.name} on GitHub`}
+                      className="shrink-0 text-muted transition-colors hover:text-accent"
+                    >
+                      <GithubIcon className="h-5 w-5" />
+                    </a>
+                  )}
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-muted">
                   {project.longDescription}
