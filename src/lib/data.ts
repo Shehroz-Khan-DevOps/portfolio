@@ -136,6 +136,7 @@ export type Project = {
   tags: string[];
   year: string;
   links?: { label: string; href: string }[];
+  githubUrl?: string;
   featured?: boolean;
 };
 
@@ -149,6 +150,7 @@ export const projects: Project[] = [
       "DriftLens continuously compares live AWS resource state against Terraform-managed state to surface drift as it happens. It auto-generates remediation Terraform HCL, streams plan/apply output straight to the browser over Server-Sent Events, and supports multi-region provider aliases against a single shared S3 state backend. A GitHub PR automation step commits the generated Terraform and opens a pull request automatically, keeping every change auditable through normal GitOps review.",
     tags: ["Terraform", "AWS", "FastAPI", "React", "GitOps"],
     year: "2024",
+    githubUrl: "https://github.com/Shehroz-Khan-DevOps/Infrastructure-Drift-Detection",
     featured: true,
   },
   {
@@ -168,6 +170,7 @@ export const projects: Project[] = [
       "Built and deployed a serverless application on AWS entirely through Terraform, covering Lambda, API Gateway, IAM, and supporting infrastructure as versioned, reviewable code.",
     tags: ["AWS", "Terraform", "Serverless"],
     year: "2024",
+    githubUrl: "https://github.com/Shehroz-Khan-DevOps/Serverless-Application",
   },
   {
     slug: "wordpress-on-aws",
@@ -177,6 +180,7 @@ export const projects: Project[] = [
       "Deployed a full WordPress application — frontend and backend — on AWS using Terraform, replacing manual server setup with a reproducible, version-controlled infrastructure definition.",
     tags: ["AWS", "Terraform", "WordPress", "Nginx"],
     year: "2024",
+    githubUrl: "https://github.com/Shehroz-Khan-DevOps/Wordpress-Application",
   },
 ];
 
