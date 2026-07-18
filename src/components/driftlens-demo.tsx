@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence, useInView, animate } from "framer-motion";
 import {
   Layers,
@@ -257,14 +258,28 @@ function CodifyingView({ active }: { active: boolean }) {
   );
 }
 
-export function DriftLensDemo() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
+function StageTabs({ stage }: { stage: Stage }) {
+  return (
+    <div className="flex gap-1 rounded-full border border-border bg-surface-2 p-1">
+      {STAGES.map((s) => (
+        <span
+          key={s}
+          className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
+            stage === s ? "bg-accent text-accent-foreground" : "text-muted"
+          }`}
+        >
+          {s === "Before" ? "Drift detected" : s === "Codifying" ? "Codifying" : "Resolved"}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function useDriftCycle(playing: boolean) {
   const [stage, setStage] = useState<Stage>("After");
-  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    if (!isHovered) {
+    if (!playing) {
       setStage("After");
       return;
     }
@@ -300,50 +315,110 @@ export function DriftLensDemo() {
       cancelled = true;
       timers.forEach(clearTimeout);
     };
-  }, [isHovered]);
+  }, [playing]);
+
+  return stage;
+}
+
+export function DriftLensDemo() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const previewStage = useDriftCycle(previewOpen);
+
+  useEffect(() => setMounted(true), []);
+
+  function openPreview() {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setPreviewOpen(true);
+  }
+
+  function scheduleClose() {
+    closeTimer.current = setTimeout(() => setPreviewOpen(false), 180);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    };
+  }, []);
 
   return (
-    <div
-      ref={ref}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="relative rounded-xl border border-border bg-surface p-4 transition-transform duration-300 ease-out hover:z-20 hover:scale-[1.06] hover:shadow-2xl sm:p-5"
-    >
-      <div className="mb-4 flex items-center justify-between">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-muted">
-          Live dashboard preview
-        </p>
-        <div className="flex gap-1 rounded-full border border-border bg-surface-2 p-1">
-          {STAGES.map((s) => (
-            <span
-              key={s}
-              className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
-                stage === s ? "bg-accent text-accent-foreground" : "text-muted"
-              }`}
-            >
-              {s === "Before" ? "Drift detected" : s === "Codifying" ? "Codifying" : "Resolved"}
-            </span>
-          ))}
+    <>
+      <div
+        ref={ref}
+        onMouseEnter={openPreview}
+        onMouseLeave={scheduleClose}
+        className="rounded-xl border border-border bg-surface p-4 sm:p-5"
+      >
+        <div className="mb-4 flex items-center justify-between">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted">
+            Live dashboard preview
+          </p>
+          <StageTabs stage="After" />
         </div>
+
+        <DashboardView data={AFTER} active={inView} />
+
+        <p className="mt-4 text-center text-[11px] text-muted">
+          Hover to watch the drift → codify → resolve cycle
+        </p>
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={stage}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
-        >
-          {stage === "Before" && <DashboardView data={BEFORE} active={inView} />}
-          {stage === "Codifying" && <CodifyingView active={isHovered} />}
-          {stage === "After" && <DashboardView data={AFTER} active={inView} />}
-        </motion.div>
-      </AnimatePresence>
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {previewOpen && (
+              <motion.div
+                key="drift-preview-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="pointer-events-none fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm sm:p-8"
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.92 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.92 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  onMouseEnter={openPreview}
+                  onMouseLeave={scheduleClose}
+                  className="pointer-events-auto max-h-[88vh] w-[min(95vw,900px)] overflow-y-auto rounded-2xl border border-border bg-surface p-5 shadow-2xl sm:p-8"
+                >
+                  <div className="mb-5 flex items-center justify-between">
+                    <p className="font-mono text-xs uppercase tracking-widest text-muted">
+                      DriftLens · Live dashboard preview
+                    </p>
+                    <StageTabs stage={previewStage} />
+                  </div>
 
-      <p className="mt-4 text-center text-[11px] text-muted">
-        Hover to watch the drift → codify → resolve cycle
-      </p>
-    </div>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={previewStage}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      {previewStage === "Before" && <DashboardView data={BEFORE} active={previewOpen} />}
+                      {previewStage === "Codifying" && <CodifyingView active={previewOpen} />}
+                      {previewStage === "After" && <DashboardView data={AFTER} active={previewOpen} />}
+                    </motion.div>
+                  </AnimatePresence>
+
+                  <p className="mt-6 text-center text-xs text-muted">
+                    Move your cursor away to close
+                  </p>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
+    </>
   );
 }
