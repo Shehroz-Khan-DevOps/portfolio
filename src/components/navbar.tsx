@@ -15,9 +15,17 @@ const NAV_LINKS = [
   { href: "/#contact", label: "Contact" },
 ];
 
-const SECTION_IDS = NAV_LINKS.filter((link) => link.href.startsWith("/#")).map(
-  (link) => link.href.slice(2)
-);
+// Maps each observed homepage section id to the nav href it should highlight.
+// "blog" is included here even though its nav link points to the standalone
+// /blog page, so scrolling past the homepage's blog preview still lights it up.
+const SECTION_TO_HREF: Record<string, string> = {
+  about: "/#about",
+  skills: "/#skills",
+  experience: "/#experience",
+  projects: "/#projects",
+  blog: "/blog",
+  contact: "/#contact",
+};
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -30,12 +38,12 @@ export function Navbar() {
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.find((entry) => entry.isIntersecting);
-        if (visible) setActive(`/#${visible.target.id}`);
+        if (visible) setActive(SECTION_TO_HREF[visible.target.id] ?? "");
       },
       { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
     );
 
-    SECTION_IDS.forEach((id) => {
+    Object.keys(SECTION_TO_HREF).forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
@@ -44,7 +52,9 @@ export function Navbar() {
   }, [pathname]);
 
   const isActive = (href: string) =>
-    href === "/blog" ? pathname === "/blog" : pathname === "/" && active === href;
+    href === "/blog"
+      ? pathname === "/blog" || (pathname === "/" && active === "/blog")
+      : pathname === "/" && active === href;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
