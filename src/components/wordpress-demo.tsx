@@ -49,6 +49,7 @@ function Node({
   label,
   sublabel,
   color,
+  compact,
 }: {
   x: number;
   y: number;
@@ -56,22 +57,29 @@ function Node({
   label: string;
   sublabel?: string;
   color?: string;
+  compact?: boolean;
 }) {
   return (
     <div
-      className="absolute z-10 flex w-[76px] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1"
+      className={`absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center ${
+        compact ? "" : "w-[76px] gap-1"
+      }`}
       style={pct(x, y)}
     >
       <div
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-sm"
+        className={`flex shrink-0 items-center justify-center rounded-lg shadow-sm ${
+          compact ? "h-5 w-5" : "h-9 w-9"
+        }`}
         style={{ background: color ?? "var(--surface-2)", border: color ? "none" : "1px solid var(--border)" }}
       >
-        <Icon className="h-4 w-4" style={{ color: color ? "#fff" : "var(--foreground)" }} />
+        <Icon className={compact ? "h-3 w-3" : "h-5 w-5"} style={{ color: color ? "#fff" : "var(--foreground)" }} />
       </div>
-      <div className="text-center leading-tight">
-        <p className="whitespace-nowrap text-[10px] font-semibold text-foreground">{label}</p>
-        {sublabel && <p className="whitespace-nowrap text-[8px] text-muted">{sublabel}</p>}
-      </div>
+      {!compact && (
+        <div className="text-center leading-tight">
+          <p className="whitespace-nowrap text-[10px] font-semibold text-foreground">{label}</p>
+          {sublabel && <p className="whitespace-nowrap text-[8px] text-muted">{sublabel}</p>}
+        </div>
+      )}
     </div>
   );
 }
@@ -165,7 +173,7 @@ function SyncPulse({ active }: { active: boolean }) {
   );
 }
 
-function Diagram({ active }: { active: boolean }) {
+function Diagram({ active, compact }: { active: boolean; compact?: boolean }) {
   return (
     <div className="relative mx-auto aspect-[760/630] w-full max-w-2xl">
       <GroupBox x={70} y={330} w={620} h={272} label="VPC · us-east-2" />
@@ -182,17 +190,17 @@ function Diagram({ active }: { active: boolean }) {
       <RequestDot delay={0} active={active} branch="L" />
       <RequestDot delay={0.6} active={active} branch="R" />
 
-      <Node x={NODES.user.x} y={NODES.user.y} icon={User} label="User" />
-      <Node x={NODES.dns.x} y={NODES.dns.y} icon={Globe} label="Route 53" sublabel="DNS" color={CATEGORY.networking} />
-      <Node x={NODES.acm.x} y={NODES.acm.y} icon={ShieldCheck} label="ACM" sublabel="TLS cert" color={CATEGORY.security} />
-      <Node x={NODES.alb.x} y={NODES.alb.y} icon={Waypoints} label="ALB" sublabel="Load balancer" color={CATEGORY.networking} />
-      <Node x={NODES.asg.x} y={NODES.asg.y} icon={RefreshCw} label="Auto Scaling" color={CATEGORY.compute} />
-      <Node x={NODES.natL.x} y={NODES.natL.y} icon={Router} label="NAT GW" color={CATEGORY.networking} />
-      <Node x={NODES.natR.x} y={NODES.natR.y} icon={Router} label="NAT GW" color={CATEGORY.networking} />
-      <Node x={NODES.ec2L.x} y={NODES.ec2L.y} icon={Server} label="EC2" sublabel="WordPress" color={CATEGORY.compute} />
-      <Node x={NODES.ec2R.x} y={NODES.ec2R.y} icon={Server} label="EC2" sublabel="WordPress" color={CATEGORY.compute} />
-      <Node x={NODES.rdsL.x} y={NODES.rdsL.y} icon={Database} label="RDS" sublabel="Primary" color={CATEGORY.database} />
-      <Node x={NODES.rdsR.x} y={NODES.rdsR.y} icon={Database} label="RDS" sublabel="Standby" color={CATEGORY.database} />
+      <Node x={NODES.user.x} y={NODES.user.y} icon={User} label="User" compact={compact} />
+      <Node x={NODES.dns.x} y={NODES.dns.y} icon={Globe} label="Route 53" sublabel="DNS" color={CATEGORY.networking} compact={compact} />
+      <Node x={NODES.acm.x} y={NODES.acm.y} icon={ShieldCheck} label="ACM" sublabel="TLS cert" color={CATEGORY.security} compact={compact} />
+      <Node x={NODES.alb.x} y={NODES.alb.y} icon={Waypoints} label="ALB" sublabel="Load balancer" color={CATEGORY.networking} compact={compact} />
+      <Node x={NODES.asg.x} y={NODES.asg.y} icon={RefreshCw} label="Auto Scaling" color={CATEGORY.compute} compact={compact} />
+      <Node x={NODES.natL.x} y={NODES.natL.y} icon={Router} label="NAT GW" color={CATEGORY.networking} compact={compact} />
+      <Node x={NODES.natR.x} y={NODES.natR.y} icon={Router} label="NAT GW" color={CATEGORY.networking} compact={compact} />
+      <Node x={NODES.ec2L.x} y={NODES.ec2L.y} icon={Server} label="EC2" sublabel="WordPress" color={CATEGORY.compute} compact={compact} />
+      <Node x={NODES.ec2R.x} y={NODES.ec2R.y} icon={Server} label="EC2" sublabel="WordPress" color={CATEGORY.compute} compact={compact} />
+      <Node x={NODES.rdsL.x} y={NODES.rdsL.y} icon={Database} label="RDS" sublabel="Primary" color={CATEGORY.database} compact={compact} />
+      <Node x={NODES.rdsR.x} y={NODES.rdsR.y} icon={Database} label="RDS" sublabel="Standby" color={CATEGORY.database} compact={compact} />
     </div>
   );
 }
@@ -201,8 +209,7 @@ export function WordPressDemo() {
   return (
     <HoverExpandPanel
       label="Request flow"
-      hint="Hover to watch a request travel through the infrastructure"
-      resting={() => <Diagram active={false} />}
+      resting={() => <Diagram active={false} compact />}
       expanded={(active) => <Diagram active={active} />}
     />
   );

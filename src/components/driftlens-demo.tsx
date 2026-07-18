@@ -324,7 +324,6 @@ export function DriftLensDemo() {
   return (
     <HoverExpandPanel
       label="Live dashboard preview"
-      hint="Hover to watch the drift → codify → resolve cycle"
       resting={(inView) => (
         <>
           <div className="mb-4 flex justify-end">
