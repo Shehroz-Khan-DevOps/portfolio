@@ -15,6 +15,9 @@
   --accent-foreground: #ffffff;
   --terminal-bg: #0f1115;
   --terminal-fg: #4ade80;
+  --status-warning: #fab219;
+  --status-serious: #ec835a;
+  --status-critical: #d03b3b;
 }
 
 .dark {
@@ -29,6 +32,9 @@
   --accent-foreground: #06120a;
   --terminal-bg: #0a0c10;
   --terminal-fg: #4ade80;
+  --status-warning: #fab219;
+  --status-serious: #ec835a;
+  --status-critical: #d03b3b;
 }
 
 @theme inline {
@@ -41,6 +47,9 @@
   --color-accent: var(--accent);
   --color-accent-2: var(--accent-2);
   --color-accent-foreground: var(--accent-foreground);
+  --color-status-warning: var(--status-warning);
+  --color-status-serious: var(--status-serious);
+  --color-status-critical: var(--status-critical);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

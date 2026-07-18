@@ -4,7 +4,12 @@ import { useMemo, useState } from "react";
 import { allProjectTags, projects } from "@/lib/data";
 import { SectionReveal } from "./section-reveal";
 import { GithubIcon } from "./icons";
+import { DriftLensDemo } from "./driftlens-demo";
 import { motion, AnimatePresence } from "framer-motion";
+
+const PROJECT_DEMOS: Record<string, React.ComponentType> = {
+  driftlens: DriftLensDemo,
+};
 
 export function Projects() {
   const [activeTag, setActiveTag] = useState<string | null>(null);
@@ -97,6 +102,11 @@ export function Projects() {
                     </span>
                   ))}
                 </div>
+                {PROJECT_DEMOS[project.slug] &&
+                  (() => {
+                    const Demo = PROJECT_DEMOS[project.slug];
+                    return <Demo />;
+                  })()}
               </motion.div>
             ))}
           </AnimatePresence>
