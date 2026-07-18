@@ -181,6 +181,7 @@ export const projects: Project[] = [
     tags: ["AWS", "Terraform", "WordPress", "Nginx"],
     year: "2024",
     githubUrl: "https://github.com/Shehroz-Khan-DevOps/Wordpress-Application",
+    featured: true,
   },
 ];
 

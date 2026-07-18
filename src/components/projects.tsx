@@ -5,10 +5,12 @@ import { allProjectTags, projects } from "@/lib/data";
 import { SectionReveal } from "./section-reveal";
 import { GithubIcon } from "./icons";
 import { DriftLensDemo } from "./driftlens-demo";
+import { WordPressDemo } from "./wordpress-demo";
 import { motion, AnimatePresence } from "framer-motion";
 
 const PROJECT_DEMOS: Record<string, React.ComponentType> = {
   driftlens: DriftLensDemo,
+  "wordpress-on-aws": WordPressDemo,
 };
 
 export function Projects() {
