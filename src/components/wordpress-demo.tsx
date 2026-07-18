@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { HoverExpandPanel } from "./hover-expand-panel";
 
 const W = 760;
-const H = 900;
+const H = 630;
 
 // AWS-style category colors: networking = purple, security = red, compute = orange, database = blue
 const CATEGORY = {
@@ -16,17 +16,17 @@ const CATEGORY = {
 };
 
 const NODES = {
-  user: { x: 380, y: 40 },
-  dns: { x: 380, y: 160 },
-  acm: { x: 660, y: 110 },
-  alb: { x: 380, y: 280 },
-  asg: { x: 380, y: 400 },
-  natL: { x: 230, y: 570 },
-  natR: { x: 530, y: 570 },
-  ec2L: { x: 230, y: 680 },
-  ec2R: { x: 530, y: 680 },
-  rdsL: { x: 230, y: 800 },
-  rdsR: { x: 530, y: 800 },
+  user: { x: 380, y: 25 },
+  dns: { x: 380, y: 110 },
+  acm: { x: 660, y: 75 },
+  alb: { x: 380, y: 195 },
+  asg: { x: 380, y: 275 },
+  natL: { x: 230, y: 384 },
+  natR: { x: 530, y: 384 },
+  ec2L: { x: 230, y: 457 },
+  ec2R: { x: 530, y: 457 },
+  rdsL: { x: 230, y: 542 },
+  rdsR: { x: 530, y: 542 },
 };
 
 function pct(x: number, y: number) {
@@ -59,18 +59,18 @@ function Node({
 }) {
   return (
     <div
-      className="absolute z-10 flex w-[92px] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5"
+      className="absolute z-10 flex w-[76px] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1"
       style={pct(x, y)}
     >
       <div
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl shadow-sm"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-sm"
         style={{ background: color ?? "var(--surface-2)", border: color ? "none" : "1px solid var(--border)" }}
       >
-        <Icon className="h-5 w-5" style={{ color: color ? "#fff" : "var(--foreground)" }} />
+        <Icon className="h-4 w-4" style={{ color: color ? "#fff" : "var(--foreground)" }} />
       </div>
       <div className="text-center leading-tight">
-        <p className="whitespace-nowrap text-[11px] font-semibold text-foreground">{label}</p>
-        {sublabel && <p className="whitespace-nowrap text-[9px] text-muted">{sublabel}</p>}
+        <p className="whitespace-nowrap text-[10px] font-semibold text-foreground">{label}</p>
+        {sublabel && <p className="whitespace-nowrap text-[8px] text-muted">{sublabel}</p>}
       </div>
     </div>
   );
@@ -96,7 +96,7 @@ function GroupBox({
       className={`absolute rounded-md ${dashed ? "border border-dashed" : "border"} border-border/70`}
       style={pctBox(x, y, w, h)}
     >
-      <span className="absolute -top-2 left-2 whitespace-nowrap bg-surface px-1 text-[9px] uppercase tracking-wide text-muted">
+      <span className="absolute -top-2 left-2 whitespace-nowrap bg-surface px-1 text-[8px] uppercase tracking-wide text-muted">
         {label}
       </span>
     </div>
@@ -106,15 +106,15 @@ function GroupBox({
 function StaticLines() {
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="absolute inset-0 h-full w-full" fill="none">
-      <line x1={NODES.user.x} y1={NODES.user.y + 22} x2={NODES.dns.x} y2={NODES.dns.y - 24} stroke="var(--border)" strokeWidth={1.5} />
-      <line x1={NODES.dns.x} y1={NODES.dns.y + 24} x2={NODES.alb.x} y2={NODES.alb.y - 24} stroke="var(--border)" strokeWidth={1.5} />
-      <line x1={NODES.acm.x} y1={NODES.acm.y + 24} x2={NODES.alb.x + 18} y2={NODES.alb.y - 12} stroke="var(--border)" strokeWidth={1.5} strokeDasharray="4 3" />
-      <line x1={NODES.alb.x} y1={NODES.alb.y + 24} x2={NODES.asg.x} y2={NODES.asg.y - 24} stroke="var(--border)" strokeWidth={1.5} />
-      <line x1={NODES.asg.x - 14} y1={NODES.asg.y + 20} x2={NODES.ec2L.x + 10} y2={NODES.ec2L.y - 26} stroke="var(--border)" strokeWidth={1.5} />
-      <line x1={NODES.asg.x + 14} y1={NODES.asg.y + 20} x2={NODES.ec2R.x - 10} y2={NODES.ec2R.y - 26} stroke="var(--border)" strokeWidth={1.5} />
-      <line x1={NODES.ec2L.x} y1={NODES.ec2L.y + 26} x2={NODES.rdsL.x} y2={NODES.rdsL.y - 24} stroke="var(--border)" strokeWidth={1.5} />
-      <line x1={NODES.ec2R.x} y1={NODES.ec2R.y + 26} x2={NODES.rdsR.x} y2={NODES.rdsR.y - 24} stroke="var(--border)" strokeWidth={1.5} />
-      <line x1={NODES.rdsL.x + 24} y1={NODES.rdsL.y} x2={NODES.rdsR.x - 24} y2={NODES.rdsR.y} stroke="var(--accent-2)" strokeWidth={1.5} strokeDasharray="3 3" />
+      <line x1={NODES.user.x} y1={NODES.user.y + 16} x2={NODES.dns.x} y2={NODES.dns.y - 18} stroke="var(--border)" strokeWidth={1.5} />
+      <line x1={NODES.dns.x} y1={NODES.dns.y + 18} x2={NODES.alb.x} y2={NODES.alb.y - 18} stroke="var(--border)" strokeWidth={1.5} />
+      <line x1={NODES.acm.x} y1={NODES.acm.y + 18} x2={NODES.alb.x + 14} y2={NODES.alb.y - 8} stroke="var(--border)" strokeWidth={1.5} strokeDasharray="4 3" />
+      <line x1={NODES.alb.x} y1={NODES.alb.y + 18} x2={NODES.asg.x} y2={NODES.asg.y - 18} stroke="var(--border)" strokeWidth={1.5} />
+      <line x1={NODES.asg.x - 10} y1={NODES.asg.y + 15} x2={NODES.ec2L.x + 8} y2={NODES.ec2L.y - 20} stroke="var(--border)" strokeWidth={1.5} />
+      <line x1={NODES.asg.x + 10} y1={NODES.asg.y + 15} x2={NODES.ec2R.x - 8} y2={NODES.ec2R.y - 20} stroke="var(--border)" strokeWidth={1.5} />
+      <line x1={NODES.ec2L.x} y1={NODES.ec2L.y + 20} x2={NODES.rdsL.x} y2={NODES.rdsL.y - 18} stroke="var(--border)" strokeWidth={1.5} />
+      <line x1={NODES.ec2R.x} y1={NODES.ec2R.y + 20} x2={NODES.rdsR.x} y2={NODES.rdsR.y - 18} stroke="var(--border)" strokeWidth={1.5} />
+      <line x1={NODES.rdsL.x + 18} y1={NODES.rdsL.y} x2={NODES.rdsR.x - 18} y2={NODES.rdsR.y} stroke="var(--accent-2)" strokeWidth={1.5} strokeDasharray="3 3" />
     </svg>
   );
 }
@@ -137,7 +137,7 @@ function RequestDot({ delay, active, branch }: { delay: number; active: boolean;
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="pointer-events-none absolute inset-0 h-full w-full">
       <motion.circle
-        r={5}
+        r={4}
         fill="var(--accent)"
         initial={{ cx: NODES.user.x, cy: NODES.user.y, opacity: 0 }}
         animate={{ cx: path.cx, cy: path.cy, opacity: [0, 1, 1, 1, 1, 1, 0, 0] }}
@@ -154,11 +154,11 @@ function SyncPulse({ active }: { active: boolean }) {
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="pointer-events-none absolute inset-0 h-full w-full">
       <motion.circle
-        r={3.5}
+        r={3}
         fill="var(--accent-2)"
         cy={NODES.rdsL.y}
-        initial={{ cx: NODES.rdsL.x + 24 }}
-        animate={{ cx: [NODES.rdsL.x + 24, midX, NODES.rdsR.x - 24, midX, NODES.rdsL.x + 24] }}
+        initial={{ cx: NODES.rdsL.x + 18 }}
+        animate={{ cx: [NODES.rdsL.x + 18, midX, NODES.rdsR.x - 18, midX, NODES.rdsL.x + 18] }}
         transition={{ duration: 2.4, repeat: Infinity, ease: "linear" }}
       />
     </svg>
@@ -167,15 +167,15 @@ function SyncPulse({ active }: { active: boolean }) {
 
 function Diagram({ active }: { active: boolean }) {
   return (
-    <div className="relative mx-auto aspect-[760/900] w-full max-w-2xl">
-      <GroupBox x={70} y={490} w={620} h={395} label="VPC · us-east-2" />
-      <GroupBox x={90} y={510} w={280} h={360} label="AZ-a" />
-      <GroupBox x={390} y={510} w={280} h={360} label="AZ-b" />
+    <div className="relative mx-auto aspect-[760/630] w-full max-w-2xl">
+      <GroupBox x={70} y={330} w={620} h={272} label="VPC · us-east-2" />
+      <GroupBox x={90} y={344} w={280} h={248} label="AZ-a" />
+      <GroupBox x={390} y={344} w={280} h={248} label="AZ-b" />
 
-      <GroupBox x={110} y={525} w={240} h={90} label="Public subnet" />
-      <GroupBox x={410} y={525} w={240} h={90} label="Public subnet" />
-      <GroupBox x={110} y={625} w={240} h={220} label="Private subnet" />
-      <GroupBox x={410} y={625} w={240} h={220} label="Private subnet" />
+      <GroupBox x={110} y={354} w={240} h={60} label="Public subnet" />
+      <GroupBox x={410} y={354} w={240} h={60} label="Public subnet" />
+      <GroupBox x={110} y={422} w={240} h={160} label="Private subnet" />
+      <GroupBox x={410} y={422} w={240} h={160} label="Private subnet" />
 
       <StaticLines />
       <SyncPulse active={active} />
