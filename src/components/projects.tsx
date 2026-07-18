@@ -73,40 +73,51 @@ export function Projects() {
                   project.featured ? "sm:col-span-2" : ""
                 }`}
               >
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-lg font-semibold text-foreground">
-                    {project.name}
-                  </h3>
-                  {project.githubUrl && (
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={`${project.name} on GitHub`}
-                      className="shrink-0 text-muted transition-colors hover:text-accent"
-                    >
-                      <GithubIcon className="h-5 w-5" />
-                    </a>
-                  )}
+                <div
+                  className={
+                    PROJECT_DEMOS[project.slug]
+                      ? "grid gap-6 lg:grid-cols-2 lg:items-center"
+                      : ""
+                  }
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="text-lg font-semibold text-foreground">
+                        {project.name}
+                      </h3>
+                      {project.githubUrl && (
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label={`${project.name} on GitHub`}
+                          className="shrink-0 text-muted transition-colors hover:text-accent"
+                        >
+                          <GithubIcon className="h-5 w-5" />
+                        </a>
+                      )}
+                    </div>
+                    <p className="mt-2 text-sm leading-relaxed text-muted">
+                      {project.longDescription}
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-1.5">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full border border-border bg-surface-2 px-2.5 py-1 text-xs text-muted"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {PROJECT_DEMOS[project.slug] &&
+                    (() => {
+                      const Demo = PROJECT_DEMOS[project.slug];
+                      return <Demo />;
+                    })()}
                 </div>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {project.longDescription}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-border bg-surface-2 px-2.5 py-1 text-xs text-muted"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                {PROJECT_DEMOS[project.slug] &&
-                  (() => {
-                    const Demo = PROJECT_DEMOS[project.slug];
-                    return <Demo />;
-                  })()}
               </motion.div>
             ))}
           </AnimatePresence>

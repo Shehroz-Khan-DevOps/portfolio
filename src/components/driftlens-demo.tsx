@@ -27,9 +27,9 @@ const STAGES = ["Before", "Codifying", "After"] as const;
 type Stage = (typeof STAGES)[number];
 
 const STAGE_DURATIONS: Record<Stage, number> = {
-  Before: 4200,
-  Codifying: 4600,
-  After: 999999, // holds indefinitely once reached via auto-play
+  Before: 3400,
+  Codifying: 4200,
+  After: 2400,
 };
 
 const LOG_LINES = [
@@ -182,7 +182,7 @@ function ResourcesByTypeBar({ data, active }: { data: DashboardData; active: boo
 function DashboardView({ data, active }: { data: DashboardData; active: boolean }) {
   return (
     <>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         <StatTile label="Total Resources" value={data.total} icon={Layers} color="var(--muted)" active={active} />
         <StatTile label="Managed" value={data.managed} icon={ShieldCheck} color="var(--accent)" active={active} />
         <StatTile label="Drifted" value={data.drifted} icon={AlertTriangle} color="var(--status-critical)" active={active} />
@@ -260,38 +260,69 @@ function CodifyingView({ active }: { active: boolean }) {
 export function DriftLensDemo() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
-  const [stage, setStage] = useState<Stage>("Before");
-  const hasAutoPlayed = useRef(false);
+  const [stage, setStage] = useState<Stage>("After");
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    if (!inView || hasAutoPlayed.current) return;
-    hasAutoPlayed.current = true;
+    if (!isHovered) {
+      setStage("After");
+      return;
+    }
 
+    let cancelled = false;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(setTimeout(() => setStage("Codifying"), STAGE_DURATIONS.Before));
-    timers.push(
-      setTimeout(() => setStage("After"), STAGE_DURATIONS.Before + STAGE_DURATIONS.Codifying)
-    );
-    return () => timers.forEach(clearTimeout);
-  }, [inView]);
+
+    function runCycle() {
+      if (cancelled) return;
+      setStage("Before");
+      timers.push(
+        setTimeout(() => {
+          if (cancelled) return;
+          setStage("Codifying");
+          timers.push(
+            setTimeout(() => {
+              if (cancelled) return;
+              setStage("After");
+              timers.push(
+                setTimeout(() => {
+                  if (!cancelled) runCycle();
+                }, STAGE_DURATIONS.After)
+              );
+            }, STAGE_DURATIONS.Codifying)
+          );
+        }, STAGE_DURATIONS.Before)
+      );
+    }
+
+    runCycle();
+
+    return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
+    };
+  }, [isHovered]);
 
   return (
-    <div ref={ref} className="mt-5 rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <div
+      ref={ref}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="relative rounded-xl border border-border bg-surface p-4 transition-transform duration-300 ease-out hover:z-20 hover:scale-[1.06] hover:shadow-2xl sm:p-5"
+    >
       <div className="mb-4 flex items-center justify-between">
         <p className="font-mono text-[11px] uppercase tracking-widest text-muted">
           Live dashboard preview
         </p>
         <div className="flex gap-1 rounded-full border border-border bg-surface-2 p-1">
           {STAGES.map((s) => (
-            <button
+            <span
               key={s}
-              onClick={() => setStage(s)}
               className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
-                stage === s ? "bg-accent text-accent-foreground" : "text-muted hover:text-foreground"
+                stage === s ? "bg-accent text-accent-foreground" : "text-muted"
               }`}
             >
               {s === "Before" ? "Drift detected" : s === "Codifying" ? "Codifying" : "Resolved"}
-            </button>
+            </span>
           ))}
         </div>
       </div>
@@ -305,10 +336,14 @@ export function DriftLensDemo() {
           transition={{ duration: 0.25 }}
         >
           {stage === "Before" && <DashboardView data={BEFORE} active={inView} />}
-          {stage === "Codifying" && <CodifyingView active={inView} />}
+          {stage === "Codifying" && <CodifyingView active={isHovered} />}
           {stage === "After" && <DashboardView data={AFTER} active={inView} />}
         </motion.div>
       </AnimatePresence>
+
+      <p className="mt-4 text-center text-[11px] text-muted">
+        Hover to watch the drift → codify → resolve cycle
+      </p>
     </div>
   );
 }
